@@ -21,7 +21,6 @@ imbalanced-learn
 uvicorn
 fastapi 
 pydantic 
-pickle
 contextlib
 logging
 passlib
