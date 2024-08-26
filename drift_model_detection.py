@@ -44,8 +44,8 @@ def get_prediction(model, reference_data, current_data):
     current_data = current_data.copy()
 
     # Generate predictions for reference and current data
-    reference_data['prediction'] = model.predict_proba(reference_data.drop(columns=['target']))[:, 1]
-    current_data['prediction'] = model.predict_proba(current_data.drop(columns=['target']))[:, 1]
+    reference_data['grav'] = model.predict_proba(reference_data.drop(columns=['grav']))[:, 1]
+    current_data['grav'] = model.predict_proba(current_data.drop(columns=['grav']))[:, 1]
 
     return reference_data, current_data
 
@@ -70,6 +70,7 @@ def add_report_to_workspace(workspace, project_name, project_description, report
         if p.name == project_name:
             project = p
             break
+
 
     if project is None:
         project = workspace.create_project(project_name)
