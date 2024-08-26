@@ -1,0 +1,15 @@
+{
+  "id": "eba3ab3d-cbbc-448b-a618-15b176d51818",
+  "name": "data_monitoring-v0",
+  "description": null,
+  "dashboard": {
+    "name": "data_monitoring-v0",
+    "panels": [],
+    "tabs": [],
+    "tab_id_to_panel_ids": {}
+  },
+  "team_id": null,
+  "date_from": null,
+  "date_to": null,
+  "created_at": "2024-08-26T22:46:49.923015"
+}
