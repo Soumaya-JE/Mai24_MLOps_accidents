@@ -4,8 +4,8 @@ import numpy as np
 
 
 # Ajout du chemin du répertoire parent de training.py
-from  src.scripts.Preprocessing import process_data 
-from src.scripts.Training import train_model, evaluate_model
+from  .Preprocessing import process_data 
+from .Training import train_model, evaluate_model
 
 
 
