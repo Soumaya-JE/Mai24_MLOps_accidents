@@ -1,14 +1,11 @@
 import pytest
-import sys
-import os
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
 
 
 # Ajout du chemin du répertoire parent de training.py
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'scripts')))
-from  Preprocessing import process_data 
-from Training import train_model, evaluate_model
+from  scripts.Preprocessing import process_data 
+from scripts.Training import train_model, evaluate_model
 
 
 
