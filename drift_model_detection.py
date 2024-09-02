@@ -85,21 +85,10 @@ if __name__ == "__main__":
     PROJECT_NAME = "data_monitoring-v0"
     PROJECT_DESCRIPTION = "Evidently Dashboards"
 
-    # Load reference and new data
     reference_data, new_data = load_data('src/data/processed/reference_from_train_data.csv', 
                                          'src/data/processed/new_data.csv')
-
-    # Load the pre-trained model
     model = load_model()
-
-    # Generate predictions for reference and current data
     reference_data, current_data = get_prediction(model, reference_data, new_data)
-
-    # Generate the classification report
     classification_report = generate_classification_report(reference_data, current_data)
-
-    # Set up the workspace
     workspace = Workspace(WORKSPACE_NAME)
-
-    # Add report to the workspace
     add_report_to_workspace(workspace, PROJECT_NAME, PROJECT_DESCRIPTION, classification_report)
