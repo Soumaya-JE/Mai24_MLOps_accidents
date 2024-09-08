@@ -1,53 +1,30 @@
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 import joblib
 import os
-from passlib.context import CryptContext
 
 app = FastAPI()
 
-security = HTTPBasic()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Charger le modèle depuis le fichier pickle
+MODEL_PATH = "/app/models/model_rf_clf.pkl"
 
-users = {
-    "user1": {
-        "username": "user1",
-        "name": "Sousou",
-        "hashed_password": pwd_context.hash('datascientest'),
-        "role": "standard",
-    },
-    "user2": {
-        "username": "user2",
-        "name": "Mim",
-        "hashed_password": pwd_context.hash('secret'),
-        "role": "standard",
-    },
-    "admin": {
-        "username": "admin",
-        "name": "Admin",
-        "hashed_password": pwd_context.hash('adminsecret'),
-        "role": "admin",
-    }
-}
+if not os.path.exists(MODEL_PATH):
+    raise FileNotFoundError(f"Le fichier de modèle {MODEL_PATH} n'existe pas.")
 
-def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
-    username = credentials.username
-    user = users.get(username)
-    if not user or not pwd_context.verify(credentials.password, user['hashed_password']):
-        raise HTTPException(
-            status_code=401,
-            detail="Identifiant ou mot de passe incorrect",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    return user
+with open(MODEL_PATH, 'rb') as model_file:
+    model_data = joblib.load(model_file)
+    if not isinstance(model_data, dict):
+        raise ValueError("Le fichier pickle ne contient pas de dictionnaire.")
 
-model_path = "model_rf_clf.pkl"
-if not os.path.exists(model_path):
-    raise FileNotFoundError(f"Le fichier de modèle {model_path} n'existe pas.")
+    model = model_data.get('model')
+    accuracy = model_data.get('accuracy')
+    retrain_timestamp = model_data.get('retrain_timestamp') 
 
-with open(model_path, 'rb') as model_file:
-    model = joblib.load(model_file)
+    if model is None or accuracy is None:
+        raise ValueError("Le dictionnaire chargé ne contient pas les clés 'model' et 'accuracy'.")
+
+# Définir l'hôte autorisé (API Gateway)
+ALLOWED_HOST = "api_gateway"
 
 class DonneesAccident(BaseModel):
     place: int
@@ -77,16 +54,24 @@ class DonneesAccident(BaseModel):
     situ: float
 
 @app.post("/predict")
-def predict(accident: DonneesAccident, user: dict = Depends(get_current_user)):
-    features = [
-        accident.place, accident.catu, accident.trajet,
-        accident.an_nais, accident.catv, accident.choc, accident.manv,
-        accident.mois, accident.jour, accident.lum, accident.agg,
-        accident.int, accident.col, accident.com, accident.dep,
-        accident.hr, accident.mn, accident.catr, accident.circ,
-        accident.nbv, accident.prof, accident.plan, accident.lartpc,
-        accident.larrout, accident.situ
-    ]
-    prediction = model.predict([features])
-    return {"prediction": int(prediction[0])}
+async def predict(request: Request, accident: DonneesAccident):
 
+    if request.headers.get("Host") != ALLOWED_HOST:
+        raise HTTPException(status_code=403, detail="Accès interdit")
+    
+    try:
+        features = [
+            accident.place, accident.catu, accident.trajet,
+            accident.an_nais, accident.catv, accident.choc, accident.manv,
+            accident.mois, accident.jour, accident.lum, accident.agg,
+            accident.int, accident.col, accident.com, accident.dep,
+            accident.hr, accident.mn, accident.catr, accident.circ,
+            accident.nbv, accident.prof, accident.plan, accident.lartpc,
+            accident.larrout, accident.situ
+        ]
+
+        prediction = model.predict([features])
+        return {"Cet accident est de niveau de gravité": prediction.tolist()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la prédiction: {e}")
+    

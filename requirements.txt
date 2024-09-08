@@ -25,6 +25,5 @@ logging
 passlib
 
 #pour test
-
 pytest
 httpx

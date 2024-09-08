@@ -1,16 +1,16 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from passlib.context import CryptContext
 import httpx
-from typing import Dict
 
 app = FastAPI()
 
 # Définir les URLs des services internes
-PREDICTION_SERVICE_URL = "http://prediction_service:8000/predict"
-RETRAIN_SERVICE_URL = "http://retrain_service:8000/retrain"
-DB_SERVICE_URL = "http://db_service:8000/query"
-MONITORING_SERVICE_URL = "http://monitoring_service:8000/monitor"
+PREDICTION_SERVICE_URL = "http://prediction_service:8001/predict"
+RETRAIN_SERVICE_URL = "http://retrain_service:8003/retrain"
+DB_SERVICE_URL = "http://db_service:5432/query"
+MONITORING_SERVICE_URL = "http://monitoring_service:8002/monitor"
 
 security = HTTPBasic()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -36,94 +36,80 @@ users = {
     }
 }
 
+# Définir la classe de données pour la prédiction
+class DonneesAccident(BaseModel):
+    place: int
+    catu: int
+    trajet: float
+    an_nais: int
+    catv: int
+    choc: float
+    manv: float
+    mois: int
+    jour: int
+    lum: int
+    agg: int
+    int: int
+    col: float
+    com: int
+    dep: int
+    hr: int
+    mn: int
+    catr: int
+    circ: float
+    nbv: int
+    prof: float
+    plan: float
+    lartpc: int
+    larrout: int
+    situ: float
+
+# Endpoints de l'API Gateway
+
+################################## statut de l'API Gateway ###################################
+
 def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
-    username = credentials.username
-    user = users.get(username)
+    user = users.get(credentials.username)
     if not user or not pwd_context.verify(credentials.password, user['hashed_password']):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=401,
             detail="Identifiant ou mot de passe incorrect",
             headers={"WWW-Authenticate": "Basic"},
         )
     return user
 
-def get_current_active_user(user: dict = Depends(get_current_user)):
-    if user.get("role") not in ["standard", "admin"]:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Utilisateur inactif",
-        )
-    return user
-
-def get_current_admin_user(user: dict = Depends(get_current_user)):
-    if user.get("role") != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Droits non autorisés",
-        )
-    return user
-
-@app.post("/predict")
-async def predict(accident: Dict, user: dict = Depends(get_current_active_user)):
-    """
-    Endpoint pour prédire la gravité de l'accident en appelant le service de prédiction.
-
-    Args:
-    - accident : Les données de l'accident sous forme de dictionnaire
-    - user : L'utilisateur récupéré à partir de la dépendance `get_current_active_user`.
-
-    Returns:
-    - dict: La prédiction de la gravité de l'accident.
-    """
+@app.get("/predict")
+async def predict(request: Request, user: dict = Depends(get_current_user)):
+    if user['role'] not in ['standard', 'admin']:
+        raise HTTPException(status_code=403, detail="Droits non autorisés")
+    
     async with httpx.AsyncClient() as client:
-        response = await client.post(PREDICTION_SERVICE_URL, json=accident)
-        response.raise_for_status()  
+        response = await client.post(PREDICTION_SERVICE_URL, json=await request.json())
         return response.json()
 
 @app.post("/retrain")
-async def retrain(user: dict = Depends(get_current_admin_user)):
-    """
-    Endpoint pour réentraîner le modèle en appelant le service de réentraînement.
-
-    Args:
-    - user : L'utilisateur récupéré à partir de la dépendance `get_current_admin_user`.
-
-    Returns:
-    - dict: Confirmation de la demande de réentraînement.
-    """
+async def retrain(request: Request, user: dict = Depends(get_current_user)):
+    if user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Droits non autorisés")
+    
     async with httpx.AsyncClient() as client:
-        response = await client.post(RETRAIN_SERVICE_URL)
-        response.raise_for_status() 
+        response = await client.post(RETRAIN_SERVICE_URL, json=await request.json())
+        return response.json()
+
+@app.get("/query")
+async def query_db(request: Request, user: dict = Depends(get_current_user)):
+    if user['role'] not in ['admin']:
+        raise HTTPException(status_code=403, detail="Droits non autorisés")
+    
+    async with httpx.AsyncClient() as client:
+        response = await client.get(DB_SERVICE_URL)
         return response.json()
 
 @app.get("/monitor")
-async def monitor(user: dict = Depends(get_current_admin_user)):
-    """
-    Endpoint pour surveiller l'accuracy du modèle en appelant le service de monitoring.
-
-    Args:
-    - user : L'utilisateur récupéré à partir de la dépendance `get_current_admin_user`.
-
-    Returns:
-    - dict: L'accuracy actuelle du modèle et l'horodatage du réentraînement.
-    """
+async def monitor(request: Request, user: dict = Depends(get_current_user)):
+    if user['role'] != 'admin':
+        raise HTTPException(status_code=403, detail="Droits non autorisés")
+    
     async with httpx.AsyncClient() as client:
         response = await client.get(MONITORING_SERVICE_URL)
-        response.raise_for_status() 
-        return response.json()
-
-@app.get("/db")
-async def query_db(user: dict = Depends(get_current_active_user)):
-    """
-    Endpoint pour accéder aux données de la base de données en appelant le service de base de données.
-
-    Args:
-    - user : L'utilisateur récupéré à partir de la dépendance `get_current_active_user`.
-
-    Returns:
-    - dict: Les résultats de la requête à la base de données.
-    """
-    async with httpx.AsyncClient() as client:
-        response = await client.get(DB_SERVICE_URL)
-        response.raise_for_status()  
         return response.json()

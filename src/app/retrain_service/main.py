@@ -5,6 +5,9 @@ import subprocess
 
 app = FastAPI()
 
+# Définir l'hôte autorisé (API Gateway)
+ALLOWED_HOST = "api_gateway"
+
 security = HTTPBasic()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -41,15 +44,21 @@ def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
     return user
 
 @app.post("/retrain")
-def retrain(user: dict = Depends(get_current_user)):
+async def retrain(request: Request, user: dict = Depends(get_current_user)):
+    # Vérifier que la requête provient de l'API Gateway
+    if request.headers.get("Host") != ALLOWED_HOST:
+        raise HTTPException(status_code=403, detail="Accès interdit")
+    
+    # Vérifier le rôle de l'utilisateur
     if user['role'] != 'admin':
         raise HTTPException(
             status_code=403,
             detail="Droits non autorisés",
         )
+    
     try:
+        # Exécuter le script de réentraînement
         subprocess.run(["python", "train.py"], check=True)
         return {"message": "Re-entrainement réussi"}
     except subprocess.CalledProcessError as e:
         raise HTTPException(status_code=500, detail=f"Erreur lors du re-entrainement: {e}")
-

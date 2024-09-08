@@ -1,6 +1,5 @@
 # local package
--e .
-
+#-e .
 # external requirements
 click
 Sphinx
@@ -14,15 +13,16 @@ joblib
 pandas
 numpy
 imblearn
-scikit-learn
+scikit-learn==1.3.2
 imbalanced-learn
 
 # pour l api
 uvicorn
 fastapi 
 pydantic 
-logging
+#logging
 passlib
+asyncpg
 
 #pour test
 pytest

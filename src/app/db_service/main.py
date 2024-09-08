@@ -1,50 +1,95 @@
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from passlib.context import CryptContext
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import psycopg2
+from psycopg2 import sql
 
 app = FastAPI()
 
-security = HTTPBasic()
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def get_db_connection():
+    conn = psycopg2.connect(
+        dbname="accidents",
+        user="mon_user",
+        password="mon_mdp",
+        host="db_service", 
+        port="5432"
+    )
+    return conn
 
-users = {
-    "user1": {
-        "username": "user1",
-        "name": "Sousou",
-        "hashed_password": pwd_context.hash('datascientest'),
-        "role": "standard",
-    },
-    "user2": {
-        "username": "user2",
-        "name": "Mim",
-        "hashed_password": pwd_context.hash('secret'),
-        "role": "standard",
-    },
-    "admin": {
-        "username": "admin",
-        "name": "Admin",
-        "hashed_password": pwd_context.hash('adminsecret'),
-        "role": "admin",
+class Accident(BaseModel):
+    num_acc: int
+    mois: int
+    jour: int
+    lum: int
+    agg: int
+    int: int
+    atm: float
+    col: float
+    com: int
+    dep: int
+    hr: int
+    mn: int
+    catv: int
+    choc: float
+    manv: float
+    num_veh: str
+    place: int
+    catu: int
+    grav: int
+    sexe: int
+    trajet: float
+    an_nais: int
+    catr: int
+    circ: float
+    nbv: int
+    prof: float
+    plan: float
+    lartpc: int
+    larrout: int
+    surf: float
+    situ: float
+
+@app.get("/accidents/{accident_id}", response_model=Accident)
+def get_accident(accident_id: int):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(sql.SQL("SELECT * FROM accident_data WHERE num_acc = %s"), [accident_id])
+    accident = cur.fetchone()
+    cur.close()
+    conn.close()
+
+    if accident is None:
+        raise HTTPException(status_code=404, detail="Accident not found")
+
+    return {
+        "num_acc": accident[0],
+        "mois": accident[1],
+        "jour": accident[2],
+        "lum": accident[3],
+        "agg": accident[4],
+        "int": accident[5],
+        "atm": accident[6],
+        "col": accident[7],
+        "com": accident[8],
+        "dep": accident[9],
+        "hr": accident[10],
+        "mn": accident[11],
+        "catv": accident[12],
+        "choc": accident[13],
+        "manv": accident[14],
+        "num_veh": accident[15],
+        "place": accident[16],
+        "catu": accident[17],
+        "grav": accident[18],
+        "sexe": accident[19],
+        "trajet": accident[20],
+        "an_nais": accident[21],
+        "catr": accident[22],
+        "circ": accident[23],
+        "nbv": accident[24],
+        "prof": accident[25],
+        "plan": accident[26],
+        "lartpc": accident[27],
+        "larrout": accident[28],
+        "surf": accident[29],
+        "situ": accident[30],
     }
-}
-
-def get_current_user(credentials: HTTPBasicCredentials = Depends(security)):
-    username = credentials.username
-    user = users.get(username)
-    if not user or not pwd_context.verify(credentials.password, user['hashed_password']):
-        raise HTTPException(
-            status_code=401,
-            detail="Identifiant ou mot de passe incorrect",
-            headers={"WWW-Authenticate": "Basic"},
-        )
-    return user
-
-@app.get("/query")
-def query_db(user: dict = Depends(get_current_user)):
-    if user['role'] != 'admin':
-        raise HTTPException(
-            status_code=403,
-            detail="Droits non autorisés",
-        )
-    return {"message": "Bienvenue sur notre base de données"}
-
