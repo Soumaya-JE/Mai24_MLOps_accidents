@@ -1,95 +1,53 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+import pandas as pd
 import psycopg2
 from psycopg2 import sql
+from datetime import datetime
 
-app = FastAPI()
+df = pd.read_csv('data_fictive.csv')
 
-def get_db_connection():
+# On ajoute la date et l heure d insertion du fichier fictif dans la table data_accidents
+df['timestamp'] = datetime.now()  
+df['is_ref'] = 'no'  
+
+# On se conencte avec psycopg2 à notre bdd
+try:
     conn = psycopg2.connect(
-        dbname="accidents",
-        user="mon_user",
-        password="mon_mdp",
-        host="db_service", 
-        port="5432"
+        host="localhost",        
+        port="5432",             
+        dbname="accidents",      
+        user="my_user",          
+        password="your_password" 
     )
-    return conn
+    cursor = conn.cursor()
 
-class Accident(BaseModel):
-    num_acc: int
-    mois: int
-    jour: int
-    lum: int
-    agg: int
-    int: int
-    atm: float
-    col: float
-    com: int
-    dep: int
-    hr: int
-    mn: int
-    catv: int
-    choc: float
-    manv: float
-    num_veh: str
-    place: int
-    catu: int
-    grav: int
-    sexe: int
-    trajet: float
-    an_nais: int
-    catr: int
-    circ: float
-    nbv: int
-    prof: float
-    plan: float
-    lartpc: int
-    larrout: int
-    surf: float
-    situ: float
+    # On insère nos données
+    insert_query = sql.SQL("""
+    INSERT INTO donnees_accidents (num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn, 
+                                   catv, choc, manv, place, catu, grav, trajet, an_nais, catr, 
+                                   circ, nbv, prof, plan, lartpc, larrout, situ, timestamp, is_ref) 
+    VALUES ({});
+    """).format(sql.SQL(', ').join(sql.Placeholder() * 29))
 
-@app.get("/accidents/{accident_id}", response_model=Accident)
-def get_accident(accident_id: int):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute(sql.SQL("SELECT * FROM accident_data WHERE num_acc = %s"), [accident_id])
-    accident = cur.fetchone()
-    cur.close()
-    conn.close()
+    data_tuples = [(
+        row['num_acc'], row['mois'], row['jour'], row['lum'], row['agg'], row['int'], 
+        row['col'], row['com'], row['dep'], row['hr'], row['mn'], row['catv'], 
+        row['choc'], row['manv'], row['place'], row['catu'], row['grav'], row['trajet'], 
+        row['an_nais'], row['catr'], row['circ'], row['nbv'], row['prof'], row['plan'], 
+        row['lartpc'], row['larrout'], row['situ'], row['timestamp'], row['is_ref']
+    ) for _, row in df.iterrows()]
 
-    if accident is None:
-        raise HTTPException(status_code=404, detail="Accident not found")
+    # Exécuter les insertions en une seule transaction
+    cursor.executemany(insert_query.as_string(conn), data_tuples)
 
-    return {
-        "num_acc": accident[0],
-        "mois": accident[1],
-        "jour": accident[2],
-        "lum": accident[3],
-        "agg": accident[4],
-        "int": accident[5],
-        "atm": accident[6],
-        "col": accident[7],
-        "com": accident[8],
-        "dep": accident[9],
-        "hr": accident[10],
-        "mn": accident[11],
-        "catv": accident[12],
-        "choc": accident[13],
-        "manv": accident[14],
-        "num_veh": accident[15],
-        "place": accident[16],
-        "catu": accident[17],
-        "grav": accident[18],
-        "sexe": accident[19],
-        "trajet": accident[20],
-        "an_nais": accident[21],
-        "catr": accident[22],
-        "circ": accident[23],
-        "nbv": accident[24],
-        "prof": accident[25],
-        "plan": accident[26],
-        "lartpc": accident[27],
-        "larrout": accident[28],
-        "surf": accident[29],
-        "situ": accident[30],
-    }
+    # Valider les transactions
+    conn.commit()
+
+    print(f"{len(df)} nouvelles lignes insérées dans la table 'donnees_accidents'.")
+
+except Exception as error:
+    print(f"Erreur lors de la connexion ou de l'insertion dans PostgreSQL : {error}")
+
+finally:
+    if conn:
+        cursor.close()
+        conn.close()
