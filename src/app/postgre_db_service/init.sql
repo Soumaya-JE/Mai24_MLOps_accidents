@@ -15,14 +15,11 @@ CREATE TABLE IF NOT EXISTS donnees_accidents (
     catv INT,
     choc FLOAT,
     manv FLOAT,
-    num_veh VARCHAR(10),
     place INT,
     catu INT,
     grav INT,
-    sexe INT,
     trajet FLOAT,
     an_nais INT,
-    annee INT,
     catr INT,
     circ FLOAT,
     nbv INT,
@@ -30,7 +27,6 @@ CREATE TABLE IF NOT EXISTS donnees_accidents (
     plan FLOAT,
     lartpc INT,
     larrout INT,
-    surf FLOAT,
     situ FLOAT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_ref VARCHAR(3) DEFAULT 'yes'
@@ -53,14 +49,11 @@ CREATE TABLE IF NOT EXISTS predictions_accidents (
     catv INT,
     choc FLOAT,
     manv FLOAT,
-    num_veh VARCHAR(10),
     place INT,
     catu INT,
     grav FLOAT, -- Notez le type FLOAT pour grav pour les prédictions
-    sexe INT,
     trajet FLOAT,
     an_nais INT,
-    annee INT,
     catr INT,
     circ FLOAT,
     nbv INT,
@@ -68,7 +61,6 @@ CREATE TABLE IF NOT EXISTS predictions_accidents (
     plan FLOAT,
     lartpc INT,
     larrout INT,
-    surf FLOAT,
     situ FLOAT,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     is_ref VARCHAR(3) DEFAULT 'no'
@@ -91,14 +83,11 @@ CREATE TEMP TABLE temp_donnees_accidents (
     catv INT,
     choc FLOAT,
     manv FLOAT,
-    num_veh VARCHAR(10),
     place INT,
     catu INT,
     grav INT,
-    sexe INT,
     trajet FLOAT,
     an_nais INT,
-    annee INT,
     catr INT,
     circ FLOAT,
     nbv INT,
@@ -106,7 +95,6 @@ CREATE TEMP TABLE temp_donnees_accidents (
     plan FLOAT,
     lartpc INT,
     larrout INT,
-    surf FLOAT,
     situ FLOAT
 );
 
@@ -118,10 +106,10 @@ CSV HEADER;
 
 -- Insérer les données distinctes dans la table finale, avec les nouvelles colonnes remplies
 INSERT INTO donnees_accidents (
-    num_acc, mois, jour, lum, agg, int, atm, col, com, dep, hr, mn, catv, choc, manv, num_veh, place, catu, grav, sexe, trajet, an_nais, annee, catr, circ, nbv, prof, plan, lartpc, larrout, surf, situ
+    num_acc, mois, jour, lum, agg, int, atm, col, com, dep, hr, mn, catv, choc, manv, place, catu, grav, trajet, an_nais, catr, circ, nbv, prof, plan, lartpc, larrout, situ
 )
 SELECT DISTINCT ON (num_acc) 
-    num_acc, mois, jour, lum, agg, int, atm, col, com, dep, hr, mn, catv, choc, manv, num_veh, place, catu, grav, sexe, trajet, an_nais, annee, catr, circ, nbv, prof, plan, lartpc, larrout, surf, situ
+    num_acc, mois, jour, lum, agg, int, atm, col, com, dep, hr, mn, catv, choc, manv, place, catu, grav, trajet, an_nais, catr, circ, nbv, prof, plan, lartpc, larrout, situ
 FROM temp_donnees_accidents
 ON CONFLICT (num_acc) DO NOTHING;
 
