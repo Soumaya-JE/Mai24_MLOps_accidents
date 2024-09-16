@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS donnees_accidents (
     lum INT,
     agg INT,
     int INT,
-    atm FLOAT,
     col FLOAT,
     com INT,
     dep INT,
@@ -40,7 +39,6 @@ CREATE TABLE IF NOT EXISTS predictions_accidents (
     lum INT,
     agg INT,
     int INT,
-    atm FLOAT,
     col FLOAT,
     com INT,
     dep INT,
@@ -51,7 +49,7 @@ CREATE TABLE IF NOT EXISTS predictions_accidents (
     manv FLOAT,
     place INT,
     catu INT,
-    grav FLOAT, -- Notez le type FLOAT pour grav pour les prédictions
+    grav FLOAT, 
     trajet FLOAT,
     an_nais INT,
     catr INT,
@@ -74,7 +72,6 @@ CREATE TEMP TABLE temp_donnees_accidents (
     lum INT,
     agg INT,
     int INT,
-    atm FLOAT,
     col FLOAT,
     com INT,
     dep INT,
@@ -106,10 +103,10 @@ CSV HEADER;
 
 -- Insérer les données distinctes dans la table finale, avec les nouvelles colonnes remplies
 INSERT INTO donnees_accidents (
-    num_acc, mois, jour, lum, agg, int, atm, col, com, dep, hr, mn, catv, choc, manv, place, catu, grav, trajet, an_nais, catr, circ, nbv, prof, plan, lartpc, larrout, situ
+    num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn, catv, choc, manv, place, catu, grav, trajet, an_nais, catr, circ, nbv, prof, plan, lartpc, larrout, situ
 )
 SELECT DISTINCT ON (num_acc) 
-    num_acc, mois, jour, lum, agg, int, atm, col, com, dep, hr, mn, catv, choc, manv, place, catu, grav, trajet, an_nais, catr, circ, nbv, prof, plan, lartpc, larrout, situ
+    num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn, catv, choc, manv, place, catu, grav, trajet, an_nais, catr, circ, nbv, prof, plan, lartpc, larrout, situ
 FROM temp_donnees_accidents
 ON CONFLICT (num_acc) DO NOTHING;
 
