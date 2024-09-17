@@ -3,11 +3,14 @@ import psycopg2
 from psycopg2 import sql
 from datetime import datetime
 
-df = pd.read_csv('data_fictive.csv')
+df = pd.read_csv('data_fictive_drifted.csv')
 
 # On ajoute la date et l heure d insertion du fichier fictif dans la table data_accidents
 df['timestamp'] = datetime.now()  
 df['is_ref'] = 'no'  
+
+# On supprime les éventuels doublons crées lors de la simulation de données dans la colonne 'num_acc'
+df.drop_duplicates(subset=['num_acc'], inplace=True)
 
 # On se conencte avec psycopg2 à notre bdd
 try:
@@ -21,12 +24,14 @@ try:
     cursor = conn.cursor()
 
     # On insère nos données
-    insert_query = sql.SQL("""
+    insert_query = """
     INSERT INTO donnees_accidents (num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn, 
                                    catv, choc, manv, place, catu, grav, trajet, an_nais, catr, 
                                    circ, nbv, prof, plan, lartpc, larrout, situ, timestamp, is_ref) 
-    VALUES ({});
-    """).format(sql.SQL(', ').join(sql.Placeholder() * 29))
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+            %s, %s, %s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT (num_acc) DO NOTHING;
+    """
 
     data_tuples = [(
         row['num_acc'], row['mois'], row['jour'], row['lum'], row['agg'], row['int'], 
@@ -37,7 +42,7 @@ try:
     ) for _, row in df.iterrows()]
 
     # Exécuter les insertions en une seule transaction
-    cursor.executemany(insert_query.as_string(conn), data_tuples)
+    cursor.executemany(insert_query, data_tuples)
 
     # Valider les transactions
     conn.commit()
