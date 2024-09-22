@@ -1,5 +1,6 @@
 # local package
 #-e .
+
 # external requirements
 click
 Sphinx
@@ -22,8 +23,11 @@ fastapi
 pydantic 
 #logging
 passlib
-asyncpg
+evidently
 
 #pour test
 pytest
 httpx
+
+#pour la base de données
+psycopg2-binary
