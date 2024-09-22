@@ -1,58 +1,88 @@
 import pandas as pd
 import psycopg2
-from psycopg2 import sql
 from datetime import datetime
 
 df = pd.read_csv('data_fictive_drifted.csv')
 
-# On ajoute la date et l heure d insertion du fichier fictif dans la table data_accidents
-df['timestamp'] = datetime.now()  
-df['is_ref'] = 'no'  
-
 # On supprime les éventuels doublons crées lors de la simulation de données dans la colonne 'num_acc'
 df.drop_duplicates(subset=['num_acc'], inplace=True)
 
-# On se conencte avec psycopg2 à notre bdd
-try:
-    conn = psycopg2.connect(
-        host="localhost",        
-        port="5432",             
-        dbname="accidents",      
-        user="my_user",          
-        password="your_password" 
-    )
-    cursor = conn.cursor()
+# Index pour suivre quelle ligne insérer
+index = 0
 
-    # On insère nos données
-    insert_query = """
-    INSERT INTO donnees_accidents (num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn, 
-                                   catv, choc, manv, place, catu, grav, trajet, an_nais, catr, 
-                                   circ, nbv, prof, plan, lartpc, larrout, situ, timestamp, is_ref) 
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-            %s, %s, %s, %s, %s, %s, %s, %s, %s)
-    ON CONFLICT (num_acc) DO NOTHING;
-    """
+def insert_row():
+    global index
+    if index < len(df):
 
-    data_tuples = [(
-        row['num_acc'], row['mois'], row['jour'], row['lum'], row['agg'], row['int'], 
-        row['col'], row['com'], row['dep'], row['hr'], row['mn'], row['catv'], 
-        row['choc'], row['manv'], row['place'], row['catu'], row['grav'], row['trajet'], 
-        row['an_nais'], row['catr'], row['circ'], row['nbv'], row['prof'], row['plan'], 
-        row['lartpc'], row['larrout'], row['situ'], row['timestamp'], row['is_ref']
-    ) for _, row in df.iterrows()]
+        row = df.iloc[index]
+        data = {
+            'num_acc': row['num_acc'],
+            'mois': row['mois'],
+            'jour': row['jour'],
+            'lum': row['lum'],
+            'agg': row['agg'],
+            'int': row['int'],
+            'col': row['col'],
+            'com': row['com'],
+            'dep': row['dep'],
+            'hr': row['hr'],
+            'mn': row['mn'],
+            'catv': row['catv'],
+            'choc': row['choc'],
+            'manv': row['manv'],
+            'place': row['place'],
+            'catu': row['catu'],
+            'grav': row['grav'],
+            'trajet': row['trajet'],
+            'an_nais': row['an_nais'],
+            'catr': row['catr'],
+            'circ': row['circ'],
+            'nbv': row['nbv'],
+            'prof': row['prof'],
+            'plan': row['plan'],
+            'lartpc': row['lartpc'],
+            'larrout': row['larrout'],
+            'situ': row['situ'],
+            'timestamp': datetime.now(),
+            'is_ref': 'no'
+        }
 
-    # Exécuter les insertions en une seule transaction
-    cursor.executemany(insert_query, data_tuples)
+        # Connexion à la base de données accidents
+        try:
+            conn = psycopg2.connect(
+                host="localhost",
+                port="5432",
+                dbname="accidents",
+                user="my_user",
+                password="your_password"
+            )
+            cursor = conn.cursor()
 
-    # Valider les transactions
-    conn.commit()
+            insert_query = """
+            INSERT INTO donnees_accidents (num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn, 
+                                           catv, choc, manv, place, catu, grav, trajet, an_nais, catr, 
+                                           circ, nbv, prof, plan, lartpc, larrout, situ, timestamp, is_ref) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    %s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (num_acc) DO NOTHING;
+            """
+            cursor.execute(insert_query, tuple(data.values()))
+            conn.commit()
 
-    print(f"{len(df)} nouvelles lignes insérées dans la table 'donnees_accidents'.")
+            print(f"Ligne insérée : {data['num_acc']}")
 
-except Exception as error:
-    print(f"Erreur lors de la connexion ou de l'insertion dans PostgreSQL : {error}")
+        except Exception as error:
+            print(f"Erreur lors de l'insertion : {error}")
 
-finally:
-    if conn:
-        cursor.close()
-        conn.close()
+        finally:
+            if conn:
+                cursor.close()
+                conn.close()
+
+        index += 1
+    else:
+        print("Toutes les lignes ont été insérées.")
+
+if __name__ == "__main__":
+    insert_row()
+
