@@ -1,2 +1,4 @@
 #!/bin/bash
-python /app/db_service/main.py
+
+# Utiliser python3 pour lancer le script Python
+python3 /app/main.py

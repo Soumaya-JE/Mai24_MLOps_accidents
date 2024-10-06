@@ -1,88 +1,93 @@
 import pandas as pd
 import psycopg2
 from datetime import datetime
+import os
+import numpy as np
 
-df = pd.read_csv('data_fictive_drifted.csv')
+# Chemin du fichier CSV
+csv_file_path = 'data_fictive_drifted.csv'
 
-# On supprime les éventuels doublons crées lors de la simulation de données dans la colonne 'num_acc'
+# Chemin du fichier de suivi de la dernière ligne insérée
+last_inserted_file = 'last_inserted_line.txt'
+
+# Charger le fichier CSV
+df = pd.read_csv(csv_file_path)
+
+# Ajouter le timestamp et marquer les données comme non référentielles
+df['timestamp'] = datetime.now()
+df['is_ref'] = 'no'
+
+# Supprimer les doublons basés sur num_acc
 df.drop_duplicates(subset=['num_acc'], inplace=True)
 
-# Index pour suivre quelle ligne insérer
-index = 0
+# Arrondir les colonnes de type float aux entiers les plus proches, puis les convertir en int
+float_cols = ['col', 'choc', 'manv', 'grav', 'trajet', 'circ', 'prof', 'plan', 'situ']
+df[float_cols] = df[float_cols].round(0).astype(int)
 
-def insert_row():
-    global index
-    if index < len(df):
+# Convertir explicitement les autres colonnes en types natifs Python
+df = df.astype({
+    'num_acc': int, 'mois': int, 'jour': int, 'lum': int, 'agg': int, 'int': int, 'com': int, 
+    'dep': int, 'hr': int, 'mn': int, 'catv': int, 'place': int, 'catu': int, 'an_nais': int, 
+    'catr': int, 'nbv': int, 'lartpc': int, 'larrout': int
+})
 
-        row = df.iloc[index]
-        data = {
-            'num_acc': row['num_acc'],
-            'mois': row['mois'],
-            'jour': row['jour'],
-            'lum': row['lum'],
-            'agg': row['agg'],
-            'int': row['int'],
-            'col': row['col'],
-            'com': row['com'],
-            'dep': row['dep'],
-            'hr': row['hr'],
-            'mn': row['mn'],
-            'catv': row['catv'],
-            'choc': row['choc'],
-            'manv': row['manv'],
-            'place': row['place'],
-            'catu': row['catu'],
-            'grav': row['grav'],
-            'trajet': row['trajet'],
-            'an_nais': row['an_nais'],
-            'catr': row['catr'],
-            'circ': row['circ'],
-            'nbv': row['nbv'],
-            'prof': row['prof'],
-            'plan': row['plan'],
-            'lartpc': row['lartpc'],
-            'larrout': row['larrout'],
-            'situ': row['situ'],
-            'timestamp': datetime.now(),
-            'is_ref': 'no'
-        }
+# Lire l'indice de la dernière ligne insérée depuis le fichier de suivi
+if os.path.exists(last_inserted_file):
+    with open(last_inserted_file, 'r') as f:
+        content = f.read().strip()
+        if content:  # Si le fichier n'est pas vide
+            last_inserted_line = int(content)
+        else:  # Si le fichier est vide
+            last_inserted_line = -1
+else:
+    last_inserted_line = -1  # Si le fichier n'existe pas encore, commencer à la première ligne
 
-        # Connexion à la base de données accidents
-        try:
-            conn = psycopg2.connect(
-                host="localhost",
-                port="5432",
-                dbname="accidents",
-                user="my_user",
-                password="your_password"
-            )
-            cursor = conn.cursor()
+# Calculer l'indice de la prochaine ligne à insérer
+next_line = last_inserted_line + 1
 
-            insert_query = """
-            INSERT INTO donnees_accidents (num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn, 
-                                           catv, choc, manv, place, catu, grav, trajet, an_nais, catr, 
-                                           circ, nbv, prof, plan, lartpc, larrout, situ, timestamp, is_ref) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                    %s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (num_acc) DO NOTHING;
-            """
-            cursor.execute(insert_query, tuple(data.values()))
-            conn.commit()
+# Vérifier si on a encore des lignes à insérer
+if next_line >= len(df):
+    print("Toutes les lignes ont déjà été insérées.")
+else:
+    # Extraire la ligne à insérer sous forme de dictionnaire
+    row = df.iloc[next_line].to_dict()
 
-            print(f"Ligne insérée : {data['num_acc']}")
+    # Connexion à la base de données PostgreSQL
+    try:
+        conn = psycopg2.connect(
+            host="localhost",
+            port="5432",
+            dbname="accidents",
+            user="my_user",
+            password="your_password"
+        )
+        cursor = conn.cursor()
 
-        except Exception as error:
-            print(f"Erreur lors de l'insertion : {error}")
+        # Requête d'insertion
+        insert_query = """
+        INSERT INTO donnees_accidents (num_acc, mois, jour, lum, agg, int, col, com, dep, hr, mn,        
+                                       catv, choc, manv, place, catu, grav, trajet, an_nais, catr,       
+                                       circ, nbv, prof, plan, lartpc, larrout, situ, timestamp, is_ref)  
+        VALUES (%(num_acc)s, %(mois)s, %(jour)s, %(lum)s, %(agg)s, %(int)s, %(col)s, %(com)s, %(dep)s, %(hr)s, %(mn)s, 
+                %(catv)s, %(choc)s, %(manv)s, %(place)s, %(catu)s, %(grav)s, %(trajet)s, %(an_nais)s, %(catr)s, 
+                %(circ)s, %(nbv)s, %(prof)s, %(plan)s, %(lartpc)s, %(larrout)s, %(situ)s, %(timestamp)s, %(is_ref)s)
+        ON CONFLICT (num_acc) DO NOTHING;
+        """
 
-        finally:
-            if conn:
-                cursor.close()
-                conn.close()
+        # Exécuter l'insertion avec les valeurs extraites du dictionnaire
+        cursor.execute(insert_query, row)
+        conn.commit()
 
-        index += 1
-    else:
-        print("Toutes les lignes ont été insérées.")
+        print(f"Ligne {next_line + 1} insérée dans la table 'donnees_accidents'.")
 
-if __name__ == "__main__":
-    insert_row()
+        # Mettre à jour l'indice de la dernière ligne insérée dans le fichier
+        with open(last_inserted_file, 'w') as f:
+            f.write(str(next_line))
 
+    except psycopg2.Error as error:
+        print(f"Erreur lors de l'insertion dans PostgreSQL : {error}")
+
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
