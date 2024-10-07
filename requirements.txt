@@ -11,8 +11,8 @@ pathlib
 joblib
 
 # pour le modele
-pandas
 numpy
+pandas
 imblearn
 scikit-learn
 imbalanced-learn
