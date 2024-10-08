@@ -9,6 +9,21 @@ from psycopg2 import sql
 import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
+import logging
+
+#configurer le logging
+if not os.path.exists('logs'):
+        os.makedirs('logs')
+logging.basicConfig(
+    level=logging.INFO, 
+    format="%(asctime)s [%(levelname)s] %(message)s",  
+    handlers=[
+        logging.FileHandler(f'logs/{"monitoring.log"}'),  
+        logging.StreamHandler() 
+    ]
+)
+# Création d'un logger
+logger = logging.getLogger(__name__)
 
 
 # Fonction pour obtenir une connexion à la database
@@ -28,14 +43,17 @@ def load_data_from_db():
     """
     Charger les données de la table 'donnees_accidents' à partir de la base de données PostgreSQL.
     """
+    logger.info("Loading data from the database...")
     connection = get_db_connection()
     try:
         with connection.cursor() as cursor:
             # Charger les données de référence
+            logger.debug("Fetching reference data...")
             cursor.execute("SELECT * FROM donnees_accidents WHERE is_ref = 'yes';")
             reference_data = cursor.fetchall()
 
             # Charger les nouvelles données
+            logger.debug("Fetching new data...")
             cursor.execute("SELECT * FROM donnees_accidents WHERE is_ref = 'no';")
             new_data = cursor.fetchall()
 
@@ -46,6 +64,7 @@ def load_data_from_db():
             # Définir la colonne num_acc comme index
             reference_df = reference_df.set_index('num_acc')
             new_data_df = new_data_df.set_index('num_acc')
+            logger.info("Data successfully loaded from the database.")
 
     finally:
         connection.close()
@@ -64,12 +83,14 @@ RETRAIN_API_URL = "http://retrain_service:8003/retrain"
 mlflow.set_tracking_uri("http://mlflow_service:5000") 
 client = MlflowClient()
 
-def load_production_accuracy_model(model_name="model_rf_clf"):
+
+def load_production_model(model_name="model_rf_clf"):
     # Charger toutes les  versions du modele et chercher le tag "is_production"
+    logger.info(f"Loading production model '{model_name}'...")
     try:
         versions = client.search_model_versions(f"name='{model_name}'")
     except mlflow.exceptions.RestException as e:
-        print(f"Model '{model_name}' not found in the registry. No production model to evaluate.")
+        logger.error(f"Model '{model_name}' not found in the registry: {e}")
         return None, None
     
     
@@ -80,28 +101,55 @@ def load_production_accuracy_model(model_name="model_rf_clf"):
             break
 
     if not prod_model_info:
-        print(f"No model tagged as 'is_production=true' exists for '{model_name}'.")
+        logger.warning(f"No production model tagged as 'is_production' exists for '{model_name}'.")
+        return None, None
+    
+    prod_model_version = prod_model_info.version
+    logger.info(f"Production model version {prod_model_version} found and loaded.")
+
+    model_uri = f"models:/{model_name}/{prod_model_version}"
+
+    prod_model = mlflow.pyfunc.load_model(model_uri)
+    return prod_model
+
+
+#charger l'accuracy de production
+def load_production_accuracy(model_name="model_rf_clf"):
+    # Charger toutes les  versions du modele et chercher le tag "is_production"
+    logger.info("Loading production accuracy...")
+    try:
+        versions = client.search_model_versions(f"name='{model_name}'")
+    except mlflow.exceptions.RestException as e:
+        logger.error(f"Model '{model_name}' not found in the registry. No production model")
+        return None, None
+    
+    
+    prod_model_info = None
+    for version in versions:
+        if version.tags.get("is_production") == "true":
+            prod_model_info = version
+            break
+
+    if not prod_model_info:
+        logger.error(f"No model tagged as 'is_production=true' exists for '{model_name}'.")
         return None, None
     
     prod_model_version = prod_model_info.version
     run_id = prod_model_info.run_id
-    print(f"Loading model version {prod_model_version} (tagged as production).")
 
-    model_uri = f"models:/{model_name}/{prod_model_version}"
-    prod_model = mlflow.pyfunc.load_model(model_uri)
-
+   
     #load accuracy
     try:
         run = client.get_run(run_id)
         prod_model_accuracy = run.data.metrics.get("new_model_accuracy")  
         if prod_model_accuracy is not None:
-            print(f"Retrieved accuracy from MLflow: {prod_model_accuracy}")
+            logger.info(f"Retrieved accuracy from MLflow: {prod_model_accuracy}")
             return prod_model_accuracy, prod_model_version
         else:
-            print("Accuracy metric not found in MLflow for this run. Evaluating model on test data.")
+            logger.info("Accuracy metric not found in MLflow for this run.")
     except Exception as e:
-        print(f"Could not retrieve metrics from MLflow: {e}")
-    return prod_model_accuracy,prod_model 
+        logger.error(f"Could not retrieve metrics from MLflow: {e}")
+    return prod_model_accuracy
 
 #fonction pour générer des prédiction
 def get_prediction(model, reference_data, current_data):
@@ -128,6 +176,7 @@ def detect_data_drift(reference_data: pd.DataFrame, new_data,SAVE_FILE = True):
     :param new_data: DataFrame contenant les nouvelles données.
     :return: Booléen indiquant si un drift a été détecté.
     """
+    logger.info("Detecting  data  drift ..")
     data_drift_report = Report(metrics=[DataDriftPreset()])
     data_drift_report.run(reference_data=reference_data.drop(['target','timestamp','is_ref'], axis=1), 
                           current_data=new_data.drop(['target','timestamp','is_ref'], axis=1), column_mapping=None)
@@ -156,6 +205,7 @@ def detect_model_drift(reference_data: pd.DataFrame, new_data: pd.DataFrame) -> 
     """
     Utilise Evidently pour détecter la dérive des performances du modèle.
     """
+    logger.info("Detecting  model  drift ..")
     classification_perf_report = Report(metrics=[ClassificationPreset()])
     classification_perf_report.run(reference_data=reference_data, current_data=new_data, column_mapping=None)
     
@@ -163,7 +213,7 @@ def detect_model_drift(reference_data: pd.DataFrame, new_data: pd.DataFrame) -> 
     report_json = classification_perf_report.as_dict()
     
     
-    print(report_json)
+    #logger.info(report_json)
     
     performance_metrics = report_json['metrics'][0]['result']
 
@@ -176,7 +226,7 @@ def detect_model_drift(reference_data: pd.DataFrame, new_data: pd.DataFrame) -> 
         if current_accuracy < reference_accuracy * 0.8:
             return True
     else:
-        print("Accuracy metric is missing from the report.")
+        #logger.error("Accuracy metric is missing from the report.")
         return False
     
     return False
@@ -187,14 +237,15 @@ def trigger_retraining():
     """
     #Fonction qui envoie une requête à l'API de réentraînement
     """
+    logger.info("trigger retraining ..")
     try:
         response = requests.post(RETRAIN_API_URL)
         if response.status_code == 200:
-            print("Réentraînement lancé avec succès via l'API.")
+            logger.info("Réentraînement lancé avec succès via l'API.")
         else:
-            print(f"Échec du réentraînement via l'API. Statut: {response.status_code}")
+            logger.error(f"Échec du réentraînement via l'API. Statut: {response.status_code}")
     except Exception as e:
-        print(f"Erreur lors de la tentative d'appel à l'API de réentraînement: {str(e)}")
+        logger.error(f"Erreur lors de la tentative d'appel à l'API de réentraînement: {str(e)}")
         
 
 
@@ -215,8 +266,21 @@ def monitor():
     Returns:
     - dict: Contient l'accuracy actuelle du modèle et la présence du drift ou non
     """
-    #charger l'accuracy
-    prod_model_accuracy, model =load_production_accuracy_model(model_name="model_rf_clf")
+
+    #charger le modèle et  l'accuracy 
+    model=load_production_model(model_name="model_rf_clf")
+    prod_model_accuracy=load_production_accuracy(model_name="model_rf_clf")
+
+    # Check if the model is None
+    if model is None:
+        # Handle the error case when the model isn't loaded
+        logger.error("No production model could be loaded.")
+    else:
+        logger.info("the model is not str")
+
+    logger.info(f"Loaded model type: {type(model)}")
+ 
+   
     # Charger les données depuis la base de données
     reference_data, new_data = load_data_from_db()
 
