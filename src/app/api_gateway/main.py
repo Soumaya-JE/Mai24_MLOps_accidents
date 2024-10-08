@@ -6,7 +6,9 @@ import requests
 import httpx
 from typing import Dict
 
-app = FastAPI()
+app = FastAPI(
+    title="SafeRoads",
+    description=" API de Prédiction de la gravité des accidents routiers en France.")
 
 # Définir les URLs des services internes
 PREDICTION_SERVICE_URL = "http://prediction_service:8001/predict"
@@ -68,6 +70,7 @@ def get_current_admin_user(user: dict = Depends(get_current_user)):
 
 # Définir la classe de données pour la prédiction
 class DonneesAccident(BaseModel):
+    num_acc : int
     place: int
     catu: int
     trajet: float
@@ -98,12 +101,12 @@ class DonneesAccident(BaseModel):
 
 ################################## statut de l'API Gateway ###################################
 
-@app.get("/status")
+@app.get("/status", tags=["Status"])
 def current_user(user: dict = Depends(get_current_active_user)):
     return {"message": f"Bienvenue sur notre API Gateway, {user['name']}!"}
 
 ################################## microservice prédiction ###################################   
-@app.post("/prediction")
+@app.post("/prediction", tags=["Prediction"])
 async def call_prediction_service(accident: DonneesAccident, user: dict = Depends(get_current_active_user)):
      """
     Endpoint pour prédire la gravité de l'accident en appelant le service de prédiction.
@@ -116,10 +119,10 @@ async def call_prediction_service(accident: DonneesAccident, user: dict = Depend
     - response: La prédiction de la gravité de l'accident.
     """
      payload = accident.model_dump()
-     response = requests.post(url=PREDICTION_SERVICE_URL, json=payload, timeout=10)
+     response = requests.post(url=PREDICTION_SERVICE_URL, json=payload, timeout=30)
      return response.json()
 ################################## microservice retraining ###################################
-@app.post("/retrain")
+@app.post("/retrain", tags=["Retrain"])
 async def retrain(user: dict = Depends(get_current_admin_user)):
     """
     Endpoint pour réentraîner le modèle en appelant le service de réentraînement.
@@ -136,7 +139,7 @@ async def retrain(user: dict = Depends(get_current_admin_user)):
         return response.json()
 
 ################################## microservice monitoring ###################################
-@app.get("/monitor")
+@app.get("/monitor",tags=["Monitoring"])
 async def monitor(user: dict = Depends(get_current_admin_user)):
     """
     Endpoint pour surveiller l'accuracy du modèle,vérifier qu'il y a pas de drift (data+model).
@@ -159,19 +162,3 @@ async def monitor(user: dict = Depends(get_current_admin_user)):
                 return response.json()
             except httpx.HTTPStatusError as exc:
                 raise HTTPException(status_code=500, detail=f"Monitoring service error: {exc.response.text}")
-################################## microservice accuracy ################################### 
-@app.get("/db")
-async def query_db(user: dict = Depends(get_current_active_user)):
-    """
-    Endpoint pour accéder aux données de la base de données en appelant le service de base de données.
-
-    Args:
-    - user : L'utilisateur récupéré à partir de la dépendance `get_current_active_user`.
-
-    Returns:
-    - dict: Les résultats de la requête à la base de données.
-    """
-    async with httpx.AsyncClient() as client:
-        response = await client.get(DB_SERVICE_URL)
-        response.raise_for_status()  
-        return response.json()
