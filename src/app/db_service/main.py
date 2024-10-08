@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import pandas as pd
 import psycopg2
 from datetime import datetime
@@ -5,10 +6,10 @@ import os
 import numpy as np
 
 # Chemin du fichier CSV
-csv_file_path = 'data_fictive_drifted.csv'
+csv_file_path = '/app/data_fictive_drifted.csv'
 
 # Chemin du fichier de suivi de la dernière ligne insérée
-last_inserted_file = 'last_inserted_line.txt'
+last_inserted_file = '/app/last_inserted_line.txt'
 
 # Charger le fichier CSV
 df = pd.read_csv(csv_file_path)
@@ -55,7 +56,7 @@ else:
     # Connexion à la base de données PostgreSQL
     try:
         conn = psycopg2.connect(
-            host="localhost",
+            host="db",
             port="5432",
             dbname="accidents",
             user="my_user",

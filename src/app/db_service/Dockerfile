@@ -7,7 +7,7 @@ WORKDIR /app
 # Copier les fichiers de l'application dans le conteneur
 COPY main.py /app/
 COPY data_fictive_drifted.csv /app/
-COPY run_insertion.sh /app/
+#COPY run_insertion.sh /app/
 COPY requirements.txt /app/
 COPY last_inserted_line.txt /app/
 
@@ -27,11 +27,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Installer pandas explicitement
 RUN pip install pandas
 
-# Donner les droits d'exécution au script bash
-RUN chmod +x /app/run_insertion.sh
+# Donner les droits d'exécution au script Python
+RUN chmod +x /app/main.py
 
 # Créer un nouveau cron job qui exécute le script toutes les minutes
-RUN echo "* * * * * root /app/run_insertion.sh >> /var/log/cron.log 2>&1" > /etc/cron.d/insertion-cron
+RUN echo "* * * * * root  /usr/local/bin/python /app/main.py >> /var/log/cron.log 2>&1" > /etc/cron.d/insertion-cron
 
 # Appliquer les permissions correctes au fichier cron job
 RUN chmod 0644 /etc/cron.d/insertion-cron
