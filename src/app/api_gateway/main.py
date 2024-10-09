@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -12,8 +12,8 @@ app = FastAPI(
 
 # Définir les URLs des services internes
 PREDICTION_SERVICE_URL = "http://prediction_service:8001/predict"
+CORRECT_PREDICTION_SERVICE_URL = "http://correct_prediction_service:8004/correct_predict"
 RETRAIN_SERVICE_URL = "http://retrain_service:8003/retrain"
-DB_SERVICE_URL = "http://db_service:5432/query"
 MONITORING_SERVICE_URL = "http://monitoring_service:8002/monitor"
 
 
@@ -97,6 +97,10 @@ class DonneesAccident(BaseModel):
     larrout: int
     situ: float
 
+class CorrectionGravite(BaseModel):
+    num_acc: int
+    grav_corrigee: int  
+
 # Endpoints de l'API Gateway
 
 ################################## statut de l'API Gateway ###################################
@@ -121,6 +125,28 @@ async def call_prediction_service(accident: DonneesAccident, user: dict = Depend
      payload = accident.model_dump()
      response = requests.post(url=PREDICTION_SERVICE_URL, json=payload, timeout=30)
      return response.json()
+
+################################## microservice correct_predict ###################################
+@app.put("/correct_predict")
+async def call_correct_prediction_service(accident: CorrectionGravite, user: dict = Depends(get_current_admin_user)):
+    """
+    Endpoint pour corriger la prédiction de gravité de l'accident en appelant le service de correction de prédiction.
+    Args:
+    - accident : Un objet contenant le numéro unique de l'accident et la gravité corrigée.
+    - user : L'utilisateur récupéré à partir de la dépendance `get_current_admin_user`.
+    Returns:
+    - dict: Confirmation de la correction effectuée ou message d'erreur en cas d'échec.
+    """
+    payload = accident.model_dump()  
+
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.put(CORRECT_PREDICTION_SERVICE_URL, json=payload)
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPStatusError as exc:
+            raise HTTPException(status_code=500, detail=f"Erreur lors de la correction de la prédiction: {exc.response.text}")
+
 ################################## microservice retraining ###################################
 @app.post("/retrain", tags=["Retrain"])
 async def retrain(user: dict = Depends(get_current_admin_user)):
