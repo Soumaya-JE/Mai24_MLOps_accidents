@@ -21,16 +21,12 @@ df['is_ref'] = 'no'
 # Supprimer les doublons basés sur num_acc
 df.drop_duplicates(subset=['num_acc'], inplace=True)
 
-# Arrondir les colonnes de type float aux entiers les plus proches, puis les convertir en int
-float_cols = ['col', 'choc', 'manv', 'grav', 'trajet', 'circ', 'prof', 'plan', 'situ']
-df[float_cols] = df[float_cols].round(0).astype(int)
+# Générer de nouveaux identifiants pour la colonne num_acc
+# On commence à 202200000001 et on incrémente (année 2022)
+start_id = 202200000001
+df['num_acc'] = [str(start_id + i).zfill(12) for i in range(len(df))]
 
-# Convertir explicitement les autres colonnes en types natifs Python
-df = df.astype({
-    'num_acc': int, 'mois': int, 'jour': int, 'lum': int, 'agg': int, 'int': int, 'com': int, 
-    'dep': int, 'hr': int, 'mn': int, 'catv': int, 'place': int, 'catu': int, 'an_nais': int, 
-    'catr': int, 'nbv': int, 'lartpc': int, 'larrout': int
-})
+print ("number of row",df.head(5))
 
 # Lire l'indice de la dernière ligne insérée depuis le fichier de suivi
 if os.path.exists(last_inserted_file):
@@ -52,8 +48,9 @@ if next_line >= len(df):
 else:
     # Extraire la ligne à insérer sous forme de dictionnaire
     row = df.iloc[next_line].to_dict()
-
+    print("row is", row )
     # Connexion à la base de données PostgreSQL
+    
     try:
         conn = psycopg2.connect(
             host="db",
@@ -63,6 +60,7 @@ else:
             password="your_password"
         )
         cursor = conn.cursor()
+    
 
         # Requête d'insertion
         insert_query = """
@@ -72,7 +70,9 @@ else:
         VALUES (%(num_acc)s, %(mois)s, %(jour)s, %(lum)s, %(agg)s, %(int)s, %(col)s, %(com)s, %(dep)s, %(hr)s, %(mn)s, 
                 %(catv)s, %(choc)s, %(manv)s, %(place)s, %(catu)s, %(grav)s, %(trajet)s, %(an_nais)s, %(catr)s, 
                 %(circ)s, %(nbv)s, %(prof)s, %(plan)s, %(lartpc)s, %(larrout)s, %(situ)s, %(timestamp)s, %(is_ref)s)
+
         ON CONFLICT (num_acc) DO NOTHING;
+    
         """
 
         # Exécuter l'insertion avec les valeurs extraites du dictionnaire
