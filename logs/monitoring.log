@@ -1,1 +1,265 @@
+2024-09-28 11:19:06,339 [INFO] Loading production model 'model_rf_clf'...
+2024-09-28 11:19:06,518 [INFO] Production model version 3 found and loaded.
+2024-09-28 11:19:11,900 [INFO] Loading production accuracy...
+2024-09-28 11:19:12,240 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-09-28 11:19:12,241 [INFO] the model is not str
+2024-09-28 11:19:12,242 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-09-28 11:19:12,242 [INFO] Loading data from the database...
+2024-09-28 11:19:19,055 [INFO] Data successfully loaded from the database.
+2024-09-28 11:19:29,821 [INFO] Detecting  data  drift ..
+2024-09-28 11:19:44,561 [INFO] Detecting  model  drift ..
+2024-09-28 11:19:47,408 [INFO] trigger retraining ..
+2024-09-28 11:20:38,057 [ERROR] Erreur lors de la tentative d'appel à l'API de réentraînement: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+2024-09-28 13:44:36,424 [INFO] Loading production model 'model_rf_clf'...
+2024-09-28 13:44:36,608 [INFO] Production model version 3 found and loaded.
+2024-09-28 13:44:45,000 [INFO] Loading production accuracy...
+2024-09-28 13:44:45,031 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-09-28 13:44:45,031 [INFO] the model is not str
+2024-09-28 13:44:45,031 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-09-28 13:44:45,031 [INFO] Loading data from the database...
+2024-09-28 13:44:47,221 [INFO] Data successfully loaded from the database.
+2024-09-28 13:44:50,241 [INFO] Detecting  data  drift ..
+2024-09-28 13:44:55,038 [INFO] Detecting  model  drift ..
+2024-09-28 13:44:55,884 [ERROR] Accuracy metric is missing from the report.
+2024-09-28 13:44:55,885 [INFO] trigger retraining ..
+2024-09-28 13:46:07,866 [INFO] Réentraînement lancé avec succès via l'API.
+2024-09-28 13:52:06,557 [INFO] Loading production model 'model_rf_clf'...
+2024-09-28 13:52:07,085 [INFO] Production model version 3 found and loaded.
+2024-09-28 13:52:08,564 [INFO] Loading production accuracy...
+2024-09-28 13:52:09,132 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-09-28 13:52:09,133 [INFO] the model is not str
+2024-09-28 13:52:09,133 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-09-28 13:52:09,133 [INFO] Loading data from the database...
+2024-09-28 13:52:10,902 [INFO] Data successfully loaded from the database.
+2024-09-28 13:52:14,069 [INFO] Detecting  data  drift ..
+2024-09-28 13:52:18,611 [INFO] Detecting  model  drift ..
+2024-09-28 13:52:19,453 [ERROR] Accuracy metric is missing from the report.
+2024-09-28 13:52:19,453 [INFO] trigger retraining ..
+2024-09-28 13:53:03,130 [INFO] Réentraînement lancé avec succès via l'API.
+2024-09-29 11:37:42,940 [INFO] Loading production model 'model_rf_clf'...
+2024-09-29 11:37:42,970 [INFO] Production model version 3 found and loaded.
+2024-09-29 11:37:43,885 [INFO] Loading production accuracy...
+2024-09-29 11:37:43,909 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-09-29 11:37:43,909 [INFO] the model is not str
+2024-09-29 11:37:43,909 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-09-29 11:37:43,910 [INFO] Loading data from the database...
+2024-09-29 11:37:45,510 [INFO] Data successfully loaded from the database.
+2024-09-29 11:37:48,357 [INFO] Detecting  data  drift ..
+2024-09-29 11:37:52,225 [INFO] Detecting  model  drift ..
+2024-09-29 11:37:53,021 [INFO] trigger retraining ..
+2024-09-29 11:38:34,194 [INFO] Réentraînement lancé avec succès via l'API.
+2024-09-29 11:42:14,754 [INFO] Loading production model 'model_rf_clf'...
+2024-09-29 11:42:14,767 [INFO] Production model version 3 found and loaded.
+2024-09-29 11:42:14,920 [INFO] Loading production accuracy...
+2024-09-29 11:42:14,945 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-09-29 11:42:14,945 [INFO] the model is not str
+2024-09-29 11:42:14,945 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-09-29 11:42:14,945 [INFO] Loading data from the database...
+2024-09-29 11:42:16,451 [INFO] Data successfully loaded from the database.
+2024-09-29 11:42:19,165 [INFO] Detecting  data  drift ..
+2024-09-29 11:42:22,743 [INFO] Detecting  model  drift ..
+2024-09-29 11:42:23,489 [INFO] trigger retraining ..
+2024-09-29 11:43:01,768 [INFO] Réentraînement lancé avec succès via l'API.
+2024-09-29 12:55:52,129 [INFO] Loading production model 'model_rf_clf'...
+2024-09-29 12:55:52,143 [INFO] Production model version 3 found and loaded.
+2024-09-29 12:55:53,015 [INFO] Loading production accuracy...
+2024-09-29 12:55:53,095 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-09-29 12:55:53,095 [INFO] the model is not str
+2024-09-29 12:55:53,096 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-09-29 12:55:53,096 [INFO] Loading data from the database...
+2024-09-29 12:55:54,721 [INFO] Data successfully loaded from the database.
+2024-09-29 12:55:57,591 [INFO] Detecting  data  drift ..
+2024-09-29 12:56:01,201 [INFO] Detecting  model  drift ..
+2024-09-29 12:56:01,861 [INFO] trigger retraining ..
+2024-09-29 12:56:49,908 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-03 17:07:27,151 [INFO] Loading production model 'model_rf_clf'...
+2024-10-03 17:07:27,343 [INFO] Production model version 1 found and loaded.
+2024-10-03 17:07:32,543 [INFO] Loading production accuracy...
+2024-10-03 17:07:32,575 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-03 17:07:32,575 [INFO] the model is not str
+2024-10-03 17:07:32,576 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-03 17:07:32,576 [INFO] Loading data from the database...
+2024-10-03 17:07:33,407 [INFO] Data successfully loaded from the database.
+2024-10-03 17:17:09,091 [INFO] Loading production model 'model_rf_clf'...
+2024-10-03 17:17:09,102 [INFO] Production model version 1 found and loaded.
+2024-10-03 17:17:09,261 [INFO] Loading production accuracy...
+2024-10-03 17:17:09,287 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-03 17:17:09,287 [INFO] the model is not str
+2024-10-03 17:17:09,288 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-03 17:17:09,288 [INFO] Loading data from the database...
+2024-10-03 17:17:10,979 [INFO] Data successfully loaded from the database.
+2024-10-03 17:17:13,737 [INFO] Detecting  data  drift ..
+2024-10-03 17:17:18,400 [INFO] Detecting  model  drift ..
+2024-10-03 17:17:19,147 [INFO] trigger retraining ..
+2024-10-03 17:18:01,139 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-03 17:19:00,445 [INFO] Loading production model 'model_rf_clf'...
+2024-10-03 17:19:00,466 [INFO] Production model version 2 found and loaded.
+2024-10-03 17:19:00,677 [INFO] Loading production accuracy...
+2024-10-03 17:19:00,703 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-10-03 17:19:00,704 [INFO] the model is not str
+2024-10-03 17:19:00,704 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-03 17:19:00,704 [INFO] Loading data from the database...
+2024-10-03 17:19:02,414 [INFO] Data successfully loaded from the database.
+2024-10-03 17:19:05,445 [INFO] Detecting  data  drift ..
+2024-10-03 17:19:08,835 [INFO] Detecting  model  drift ..
+2024-10-03 17:19:09,442 [INFO] trigger retraining ..
+2024-10-03 17:19:50,991 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-03 17:22:12,683 [INFO] Loading production model 'model_rf_clf'...
+2024-10-03 17:22:12,726 [INFO] Production model version 2 found and loaded.
+2024-10-03 17:22:13,700 [INFO] Loading production accuracy...
+2024-10-03 17:22:13,751 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-10-03 17:22:13,751 [INFO] the model is not str
+2024-10-03 17:22:13,751 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-03 17:22:13,751 [INFO] Loading data from the database...
+2024-10-03 17:22:15,554 [INFO] Data successfully loaded from the database.
+2024-10-03 17:22:18,537 [INFO] Detecting  data  drift ..
+2024-10-03 17:22:22,270 [INFO] Detecting  model  drift ..
+2024-10-03 17:22:23,056 [INFO] trigger retraining ..
+2024-10-03 17:23:07,319 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-04 12:50:02,566 [INFO] Loading production model 'model_rf_clf'...
+2024-10-04 12:50:03,184 [INFO] Production model version 2 found and loaded.
+2024-10-04 12:50:07,946 [INFO] Loading production accuracy...
+2024-10-04 12:50:08,425 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-10-04 12:50:08,425 [INFO] the model is not str
+2024-10-04 12:50:08,425 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-04 12:50:08,425 [INFO] Loading data from the database...
+2024-10-04 12:50:10,136 [INFO] Data successfully loaded from the database.
+2024-10-04 12:50:12,884 [INFO] Detecting  data  drift ..
+2024-10-04 12:50:17,029 [INFO] Detecting  model  drift ..
+2024-10-04 12:50:17,779 [INFO] trigger retraining ..
+2024-10-04 12:51:08,427 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-05 10:21:15,405 [INFO] Loading production model 'model_rf_clf'...
+2024-10-05 10:21:16,210 [INFO] Production model version 2 found and loaded.
+2024-10-05 10:21:22,033 [INFO] Loading production accuracy...
+2024-10-05 10:21:22,062 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-10-05 10:21:22,063 [INFO] the model is not str
+2024-10-05 10:21:22,063 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-05 10:21:22,063 [INFO] Loading data from the database...
+2024-10-05 10:21:23,936 [INFO] Data successfully loaded from the database.
+2024-10-05 10:21:27,151 [INFO] Detecting  data  drift ..
+2024-10-05 10:21:31,482 [INFO] Detecting  model  drift ..
+2024-10-05 10:21:32,327 [INFO] trigger retraining ..
+2024-10-05 10:22:17,202 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-07 10:40:56,363 [INFO] Loading production model 'model_rf_clf'...
+2024-10-07 10:40:56,518 [INFO] Production model version 1 found and loaded.
+2024-10-07 10:41:01,104 [INFO] Loading production accuracy...
+2024-10-07 10:41:01,139 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-07 10:41:01,139 [INFO] the model is not str
+2024-10-07 10:41:01,139 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-07 10:41:01,139 [INFO] Loading data from the database...
+2024-10-07 10:41:01,873 [INFO] Data successfully loaded from the database.
+2024-10-07 11:32:27,296 [INFO] Loading production model 'model_rf_clf'...
+2024-10-07 11:32:27,308 [INFO] Production model version 1 found and loaded.
+2024-10-07 11:32:27,471 [INFO] Loading production accuracy...
+2024-10-07 11:32:27,496 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-07 11:32:27,496 [INFO] the model is not str
+2024-10-07 11:32:27,496 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-07 11:32:27,496 [INFO] Loading data from the database...
+2024-10-07 11:32:28,184 [INFO] Data successfully loaded from the database.
+2024-10-07 16:20:08,091 [INFO] Loading production model 'model_rf_clf'...
+2024-10-07 16:20:08,126 [INFO] Production model version 1 found and loaded.
+2024-10-07 16:20:09,494 [INFO] Loading production accuracy...
+2024-10-07 16:20:09,571 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-07 16:20:09,572 [INFO] the model is not str
+2024-10-07 16:20:09,572 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-07 16:20:09,572 [INFO] Loading data from the database...
+2024-10-07 16:20:10,191 [INFO] Data successfully loaded from the database.
+2024-10-08 16:25:14,357 [INFO] Loading production model 'model_rf_clf'...
+2024-10-08 16:25:14,506 [INFO] Production model version 1 found and loaded.
+2024-10-08 16:25:20,423 [INFO] Loading production accuracy...
+2024-10-08 16:25:20,475 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-08 16:25:20,475 [INFO] the model is not str
+2024-10-08 16:25:20,475 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-08 16:25:20,476 [INFO] Loading data from the database...
+2024-10-08 16:25:21,791 [INFO] Data successfully loaded from the database.
+2024-10-08 16:48:52,196 [INFO] Loading production model 'model_rf_clf'...
+2024-10-08 16:48:52,262 [INFO] Production model version 1 found and loaded.
+2024-10-08 16:48:53,150 [INFO] Loading production accuracy...
+2024-10-08 16:48:53,185 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-08 16:48:53,185 [INFO] the model is not str
+2024-10-08 16:48:53,185 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-08 16:48:53,185 [INFO] Loading data from the database...
+2024-10-08 16:48:53,956 [INFO] Data successfully loaded from the database.
+2024-10-08 16:48:55,316 [WARNING] Current data is empty; skipping predictions for current data.
+2024-10-08 16:48:55,359 [INFO] Detecting  data  drift ..
+2024-10-08 17:06:18,772 [INFO] Loading production model 'model_rf_clf'...
+2024-10-08 17:06:19,269 [INFO] Production model version 1 found and loaded.
+2024-10-08 17:06:20,106 [INFO] Loading production accuracy...
+2024-10-08 17:06:20,143 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-08 17:06:20,143 [INFO] the model is not str
+2024-10-08 17:06:20,143 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-08 17:06:20,143 [INFO] Loading data from the database...
+2024-10-08 17:06:20,889 [INFO] Data successfully loaded from the database.
+2024-10-08 17:06:22,224 [WARNING] Current data is empty; skipping predictions for current data.
+2024-10-08 17:06:22,226 [INFO] Detecting  data  drift ..
+2024-10-09 11:32:37,340 [INFO] Loading production model 'model_rf_clf'...
+2024-10-09 11:32:37,568 [INFO] Production model version 1 found and loaded.
+2024-10-09 11:32:42,416 [INFO] Loading production accuracy...
+2024-10-09 11:32:42,447 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-09 11:32:42,447 [INFO] the model is not str
+2024-10-09 11:32:42,447 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-09 11:32:42,447 [INFO] Loading data from the database...
+2024-10-09 11:32:43,287 [INFO] Data successfully loaded from the database.
+2024-10-09 11:32:44,639 [WARNING] Current data is empty; skipping predictions for current data.
+2024-10-09 11:32:44,667 [INFO] Detecting  data  drift ..
+2024-10-09 11:57:52,883 [INFO] Loading production model 'model_rf_clf'...
+2024-10-09 11:57:52,896 [INFO] Production model version 1 found and loaded.
+2024-10-09 11:57:53,061 [INFO] Loading production accuracy...
+2024-10-09 11:57:53,089 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-09 11:57:53,089 [INFO] the model is not str
+2024-10-09 11:57:53,089 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-09 11:57:53,089 [INFO] Loading data from the database...
+2024-10-09 11:57:54,794 [INFO] Data successfully loaded from the database.
+2024-10-09 11:57:57,592 [INFO] Detecting  data  drift ..
+2024-10-09 11:58:02,760 [INFO] Detecting  model  drift ..
+2024-10-09 11:58:03,486 [INFO] trigger retraining ..
+2024-10-09 11:58:46,712 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-10 11:55:06,024 [INFO] Loading production model 'model_rf_clf'...
+2024-10-10 11:55:06,199 [INFO] Production model version 3 found and loaded.
+2024-10-10 11:55:13,743 [INFO] Loading production accuracy...
+2024-10-10 11:55:13,772 [INFO] Retrieved accuracy from MLflow: 0.8855323819978046
+2024-10-10 11:55:13,772 [INFO] the model is not str
+2024-10-10 11:55:13,772 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-10 11:55:13,772 [INFO] Loading data from the database...
+2024-10-10 11:55:14,588 [INFO] Data successfully loaded from the database.
+2024-10-10 11:55:16,071 [INFO] Detecting  data  drift ..
+2024-10-10 11:55:19,715 [INFO] Detecting  model  drift ..
+2024-10-10 11:55:20,113 [INFO] trigger retraining ..
+2024-10-10 11:55:35,693 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-11 09:37:52,497 [INFO] Loading production model 'model_rf_clf'...
+2024-10-11 09:37:52,651 [INFO] Production model version 1 found and loaded.
+2024-10-11 09:37:58,154 [INFO] Loading production accuracy...
+2024-10-11 09:37:58,180 [INFO] Retrieved accuracy from MLflow: 0.7836484414920797
+2024-10-11 09:37:58,180 [INFO] the model is not str
+2024-10-11 09:37:58,180 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-11 09:37:58,181 [INFO] Loading data from the database...
+2024-10-11 09:37:59,389 [INFO] Data successfully loaded from the database.
+2024-10-11 09:38:00,705 [INFO] Detecting  data  drift ..
+2024-10-11 09:38:04,260 [INFO] Detecting  model  drift ..
+2024-10-11 09:38:04,687 [INFO] trigger retraining ..
+2024-10-11 09:38:19,914 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-11 09:51:55,929 [INFO] Loading production model 'model_rf_clf'...
+2024-10-11 09:51:55,942 [INFO] Production model version 1 found and loaded.
+2024-10-11 09:51:56,073 [INFO] Loading production accuracy...
+2024-10-11 09:51:56,103 [INFO] Retrieved accuracy from MLflow: 0.7836484414920797
+2024-10-11 09:51:56,103 [INFO] the model is not str
+2024-10-11 09:51:56,103 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-11 09:51:56,103 [INFO] Loading data from the database...
+2024-10-11 09:51:56,783 [INFO] Data successfully loaded from the database.
+2024-10-11 09:51:58,153 [INFO] Detecting  data  drift ..
+2024-10-11 09:52:00,800 [INFO] Detecting  model  drift ..
+2024-10-11 09:52:01,167 [INFO] trigger retraining ..
+2024-10-11 09:52:21,558 [INFO] Réentraînement lancé avec succès via l'API.
+2024-10-11 10:16:50,271 [INFO] Loading production model 'model_rf_clf'...
+2024-10-11 10:16:50,312 [INFO] Production model version 1 found and loaded.
+2024-10-11 10:16:51,168 [INFO] Loading production accuracy...
+2024-10-11 10:16:51,197 [INFO] Retrieved accuracy from MLflow: 0.7937659683188554
+2024-10-11 10:16:51,197 [INFO] the model is not str
+2024-10-11 10:16:51,198 [INFO] Loaded model type: <class 'mlflow.pyfunc.PyFuncModel'>
+2024-10-11 10:16:51,198 [INFO] Loading data from the database...
+2024-10-11 10:16:51,861 [INFO] Data successfully loaded from the database.
+2024-10-11 10:16:53,184 [INFO] Detecting  data  drift ..
+2024-10-11 10:16:55,821 [INFO] Detecting  model  drift ..
+2024-10-11 10:16:56,167 [INFO] trigger retraining ..
+2024-10-11 10:17:17,507 [INFO] Réentraînement lancé avec succès via l'API.
 
