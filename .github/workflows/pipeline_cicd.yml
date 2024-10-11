@@ -76,6 +76,9 @@ jobs:
           docker tag mai24_mlops_accidents-prediction_service:latest saferoads/prediction_service:latest
           docker tag mai24_mlops_accidents-retrain_service:latest saferoads/retrain_service:latest
           docker tag mai24_mlops_accidents-monitoring_service:latest saferoads/monitoring_service:latest
+          docker tag mai24_mlops_accidents-db_service:latest saferoads/db_service:latest
+          docker tag mai24_mlops_accidents-db:latest saferoads/db:latest
+          docker tag mai24_mlops_accidents-correct_prediction_service:latest saferoads/correct_prediction_service:latest
 
     
       - name: Push Docker images to Docker Hub
@@ -84,5 +87,8 @@ jobs:
           docker push saferoads/prediction_service:latest
           docker push saferoads/retrain_service:latest
           docker push saferoads/monitoring_service:latest
+          docker push saferoads/db_service:latest 
+          docker push saferoads/db:latest
+          docker push saferoads/correct_prediction_service:latest
 
 
