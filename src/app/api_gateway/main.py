@@ -127,7 +127,7 @@ async def call_prediction_service(accident: DonneesAccident, user: dict = Depend
      return response.json()
 
 ################################## microservice correct_predict ###################################
-@app.put("/correct_predict")
+@app.put("/correct_predict", tags=["Correct_predict"])
 async def call_correct_prediction_service(accident: CorrectionGravite, user: dict = Depends(get_current_admin_user)):
     """
     Endpoint pour corriger la prédiction de gravité de l'accident en appelant le service de correction de prédiction.
