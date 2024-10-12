@@ -115,7 +115,9 @@ L'organisation du projet
 
 ###   Installer les  packages de docker
 
-    installer docker engine en suivant <a target="_blank" href="https://docs.docker.com/engine/install/">ces instructions</a>.
+    
+Installer docker engine en suivant <a target="_blank" href="https://docs.docker.com/engine/install/">ces instructions</a>. 
+     
 
 ### 3- Construire les conteneurs Docker
 
@@ -133,7 +135,7 @@ L'organisation du projet
 ### 6- Accéder aux images  hébérgées sur Dockerhub
 
   
-   Vous pouvez télecharger les images dockerhub disponibles <a target="_blank" href="https://hub.docker.com/repository/docker/saferoads/monitoring_service/general">içi</a>. 
+   Vous pouvez télecharger les images dockerhub disponibles <a target="_blank" href="https://hub.docker.com/repository/docker/saferoads/monitoring_service/general">ici</a>. 
 
     Exemple pour télécharger l'image du service "monitoting":
       docker pull saferoads/monitoring_service:latest
