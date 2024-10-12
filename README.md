@@ -94,7 +94,7 @@ L'organisation du projet
 ## Etapes à suivre
 
 
-### 1- Cloner le dêpot git
+### 1- Cloner le depôt git
 
    git clone https://github.com/Soumaya-JE/Mai24_MLOps_accidents.git
 
