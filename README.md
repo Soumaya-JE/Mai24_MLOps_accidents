@@ -100,18 +100,18 @@ L'organisation du projet
 
 ### 2- Créer un environnement virtuel en utilisant Virtualenv.
 
-    python -m venv my_env
+    python3 -m venv my_env
 
 ###   Activer
 
-    source myenv/bin/activate (linux)
+    source my_env/bin/activate (linux)
 
-    myenv\Scripts\activate (windows)
+    my_env\Scripts\activate (windows)
 
 
 ###   Installer les packages de requirements.txt
 
-    `pip install -r .\requirements.txt` 
+    pip install -r  Mai24_MLOps_accidents/requirements.txt
 
 ###   Installer les  packages de docker
 
@@ -120,8 +120,8 @@ Installer docker engine en suivant <a target="_blank" href="https://docs.docker.
      
 
 ### 3- Construire les conteneurs Docker
-
-    ./ docker-compose up --build
+    cd Mai24_MLOps_accidents
+    docker-compose up --build
 
 ### 4- Vérifier le  bon fonctionnement de l'application
 
@@ -135,7 +135,7 @@ Installer docker engine en suivant <a target="_blank" href="https://docs.docker.
 ### 6- Accéder aux images  hébérgées sur Dockerhub
 
   
-   Vous pouvez télecharger les images dockerhub disponibles <a target="_blank" href="https://hub.docker.com/repository/docker/saferoads/monitoring_service/general">ici</a>. 
+   Vous pouvez télecharger les images dockerhub disponibles <a target="_blank" href="https://hub.docker.com/u/saferoads">ici</a>. 
 
     Exemple pour télécharger l'image du service "monitoting":
       docker pull saferoads/monitoring_service:latest
