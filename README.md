@@ -2,7 +2,7 @@ SafeRoads: app pour prédiction de la gravité des accidents routiers
 ==============================
 Notre projet s'inscrit dans le cadre de la formation <a target="_blank" href="https://datascientest.com/formation-ml-ops">MLOPS.</a> dispensée par <a target="_blank" href="https://datascientest.com/">DataScientest.</a>. 
 
-L'objectif étant de construire une application qui permet de prédire la gravité des accidents routiers **en temps réel** à partir de données historiques, afin d'optimiser la gestion des interventions d'urgence et de réduire les délais de réponse. Elle permet ainsi aux services de secours d'anticiper les ressources nécessaires et d'améliorer l'efficacité des opérations sur le terrain.
+L'objectif étant de construire une application qui permet de **prédire** la gravité des accidents routiers **en temps réel** à partir de données historiques, afin **d'optimiser** la gestion des interventions d'urgence et de réduire les délais de réponse. Elle permet ainsi aux services de secours d'anticiper les ressources nécessaires et d'améliorer l'efficacité des opérations sur le terrain.
 
 Equipe 
 ==============================
@@ -13,7 +13,7 @@ Les membres d'équipe sont:
 
 Architecture de l'application
 ==============================
-SafeRoads est conçu selon une architecture en microservices, avec une  API gateway  qui sert de point d'entrée unique pour tous les cliernts, en redirigeant les requêtes vers les microservices appropriés.
+SafeRoads est conçu selon une architecture en microservices, avec une  API gateway  qui sert de point d'entrée unique pour tous les clients, en redirigeant les requêtes vers les microservices appropriés.
 
 Chaque microservice s'exécute dans son propre conteneur Docker. Les requêtes sont traitées par une micro-API dédiée dans le conteneur, et la persistance des données est assurée via des volumes Docker.
 
@@ -28,7 +28,7 @@ Ci_dessous est l'architecture globale:
 
 Voici une liste des microservices fournis, y compris leurs URL et identifiants :
 
-| Services              | URL                       | Credentials           |
+| Services              | URL                       | Credentiels           |
 |-----------------------|---------------------------|-----------------------|
 |API gateway            | http://localhost:8080     |Admin/User             |
 |API prediction         | http://localhost:8001     |Admin/User             |
@@ -42,28 +42,28 @@ L'organisation du projet
 ------------
 
     ├── LICENSE
-    ├── README.md          <- The top-level README for developers using this project.
+    ├── README.md          <- Le fichier README pour les développeurs utilisant ce projet.
     ├──
     │
-    ├── models             <- First Trained model.
+    ├── models             <- Premier modèle entrainé.
     │
     ├── notebooks          
     │
     │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting.
+    ├── reports            <- Analyses générées au format HTML, PDF, LaTeX, etc.
+    │   └── figures        <- Génération de graphiques et de chiffres à utiliser dans les rapports.
     │   └── Mai24_CMLOPS_Accidents_Cdc.pdf
     │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
+    ├── requirements.txt   <- Le fichier d'exigences pour reproduire l'environnement de developpement,
+    │                         généré avec `pip freeze > requirements.txt`
     │
-    ├── src                <- Source code for use in this project.
+    ├── src                <- Code source à utiliser dans ce projet.
     │   ├
     │   │
-    │   ├── data           <- Reference data.
+    │   ├── data           <- Données de référence.
     │   │      
     │   │   
-    │   ├── scripts         <- Scripts to ingest and process data,train models and then use trained models to make prediction.
+    │   ├── scripts         <- Scripts pour ingérer et traiter les données, entraîner des modèles, puis utiliser des modèles entraînés pour effectuer des prédictions.
     │   │   │               
     │   │   ├── config_logging.py
     │   │   └── Ingestion.py
@@ -71,7 +71,7 @@ L'organisation du projet
     │   │   └── Preprocessing.py
     │   │   └── Training.py
     │   │
-    │   ├── app                <- Scripts to create containers for each service.
+    │   ├── app                <- Scripts pour créer des conteneurs pour chaque service.
     │   │   └── api_gateway
     │   │   ├── monitoring_service  
     │   │   └── postgre_db_service
@@ -80,7 +80,7 @@ L'organisation du projet
     │   │   └── correct_prediction_service
     │   │   └── db_service
     │   │   
-    │   └── testing         <- Unit tests for each service.
+    │   └── testing         <- Tests unitaires pour chaque service.
     │   │   └── test_endpoint_status.py
     │   │   ├── test_endpoint_retraining.py
     │   │   └── test_endpoint_prediction.py
