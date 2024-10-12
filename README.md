@@ -34,7 +34,7 @@ Voici une liste des microservices fournis, y compris leurs URL et identifiants :
 |API prediction         | http://localhost:8001     |Admin/User             |
 |API correct_prediction | http://localhost:8004     |Admin                  |
 |API monitoring         | http://localhost:8002     |Admin                  |
-|API retrain            | http://localhost:8003     ||Admin                 |
+|API retrain            | http://localhost:8003     |Admin                  |
 
 
 
