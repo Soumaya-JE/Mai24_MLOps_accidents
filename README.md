@@ -1,96 +1,142 @@
-Project Name
+SafeRoads: app pour prédiction de la gravité des accidents routiers
 ==============================
+Notre projet s'inscrit dans le cadre de la formation <a target="_blank" href="https://datascientest.com/formation-ml-ops">MLOPS.</a> dispensée par <a target="_blank" href="https://datascientest.com/">DataScientest.</a>. 
 
-This project is a starting Pack for MLOps projects based on the subject "road accident". It's not perfect so feel free to make some modifications on it.
+L'objectif étant de construire une application qui permet de prédire la gravité des accidents routiers **en temps réel** à partir de données historiques, afin d'optimiser la gestion des interventions d'urgence et de réduire les délais de réponse. Elle permet ainsi aux services de secours d'anticiper les ressources nécessaires et d'améliorer l'efficacité des opérations sur le terrain.
 
-Project Organization
+Equipe 
+==============================
+Les membres d'équipe sont:
+
+- Marine Merle 
+- Soumaya Jendoubi Elhabibi
+
+Architecture de l'application
+==============================
+SafeRoads est conçu selon une architecture en microservices, avec une  API gateway  qui sert de point d'entrée unique pour tous les cliernts, en redirigeant les requêtes vers les microservices appropriés.
+
+Chaque microservice s'exécute dans son propre conteneur Docker. Les requêtes sont traitées par une micro-API dédiée dans le conteneur, et la persistance des données est assurée via des volumes Docker.
+
+Un versioning de modèles a été réalisé à l’aide de MLFlow.​
+
+Ci_dessous est l'architecture globale:
+![Architecture globale](./reports/figures/architecture.jpg)
+
+
+
+
+
+Voici une liste des microservices fournis, y compris leurs URL et identifiants :
+
+| Services              | URL                       | Credentials           |
+|-----------------------|---------------------------|-----------------------|
+|API gateway            | http://localhost:8080     |Admin/User             |
+|API prediction         | http://localhost:8001     |Admin/User             |
+|API correct_prediction | http://localhost:8004     |Admin                  |
+|API monitoring         | http://localhost:8002     |Admin                  |
+|API retrain            | http://localhost:8003     ||Admin                 |
+
+
+
+L'organisation du projet
 ------------
 
     ├── LICENSE
     ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
+    ├──
     │
-    ├── logs               <- Logs from training and predicting
+    ├── models             <- First Trained model.
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
+    ├── notebooks          
     │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
     │
     ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
+    │   └── figures        <- Generated graphics and figures to be used in reporting.
+    │   └── Mai24_CMLOPS_Accidents_Cdc.pdf
     │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
     │
     ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
+    │   ├
     │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   ├── check_structure.py    
-    │   │   ├── import_raw_data.py 
-    │   │   └── make_dataset.py
+    │   ├── data           <- Reference data.
+    │   │      
+    │   │   
+    │   ├── scripts         <- Scripts to ingest and process data,train models and then use trained models to make prediction.
+    │   │   │               
+    │   │   ├── config_logging.py
+    │   │   └── Ingestion.py
+    │       └── Predict.py
+    │   │   └── Preprocessing.py
+    │   │   └── Training.py
     │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   ├── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │   │   └── visualize.py
-    │   └── config         <- Describe the parameters used in train_model.py and predict_model.py
+    │   ├── app                <- Scripts to create containers for each service.
+    │   │   └── api_gateway
+    │   │   ├── monitoring_service  
+    │   │   └── postgre_db_service
+    │   │   └── prediction_service
+    │   │   └── retrain_service
+    │   │   └── correct_prediction_service
+    │   │   └── db_service
+    │   │   
+    │   └── testing         <- Unit tests for each service.
+    │   │   └── test_endpoint_status.py
+    │   │   ├── test_endpoint_retraining.py
+    │   │   └── test_endpoint_prediction.py
+    │   │   └── test_endpoint_monitoring.py
+    │   │ 
+    │── docker-compose.yml   
+    │── logs
 
 ---------
 
-## Steps to follow 
+## Etapes à suivre
 
-Convention : All python scripts must be run from the root specifying the relative file path.
 
-### 1- Create a virtual environment using Virtualenv.
+### 1- Cloner le dêpot git
 
-    `python -m venv my_env`
+   git clone https://github.com/Soumaya-JE/Mai24_MLOps_accidents.git
 
-###   Activate it 
+### 2- Créer un environnement virtuel en utilisant Virtualenv.
 
-    `./my_env/Scripts/activate`
+    python -m venv my_env
 
-###   Install the packages from requirements.txt
+###   Activer
 
-    `pip install -r .\requirements.txt` ### You will have an error in "setup.py" but this won't interfere with the rest
+    source myenv/bin/activate (linux)
 
-### 2- Execute import_raw_data.py to import the 4 datasets.
+    myenv\Scripts\activate (windows)
 
-    `python .\src\data\import_raw_data.py` ### It will ask you to create a new folder, accept it.
 
-### 3- Execute make_dataset.py initializing `./data/raw` as input file path and `./data/preprocessed` as output file path.
+###   Installer les packages de requirements.txt
 
-    `python .\src\data\make_dataset.py`
+    `pip install -r .\requirements.txt` 
 
-### 4- Execute train_model.py to instanciate the model in joblib format
+###   Installer les  packages de docker
 
-    `python .\src\models\train_model.py`
+    installer docker engine en suivant <a target="_blank" href="https://docs.docker.com/engine/install/">ces instructions</a>.
 
-### 5- Finally, execute predict_model.py with respect to one of these rules :
+### 3- Construire les conteneurs Docker
+
+    ./ docker-compose up --build
+
+### 4- Vérifier le  bon fonctionnement de l'application
+
+    L'interface Swagger de l'API gateway, qui propose une liste complète et interactive des points de terminaison, est disponible à cette adresse :
+    http://0.0.0.0:8000/docs 
+
+### 5- Arrêter l'application
+
+    Utiliser Ctrl + C pour arrêter l'application.
+
+### 6- Accéder aux images  hébérgées sur Dockerhub
+
   
-  - Provide a json file as follow : 
+   Vous pouvez télecharger les images dockerhub disponibles <a target="_blank" href="https://hub.docker.com/repository/docker/saferoads/monitoring_service/general">içi</a>. 
 
-    
-    `python ./src/models/predict_model.py ./src/models/test_features.json`
-
-  test_features.json is an example that you can try 
-
-  - If you do not specify a json file, you will be asked to enter manually each feature. 
-
+    Exemple pour télécharger l'image du service "monitoting":
+      docker pull saferoads/monitoring_service:latest
 
 ------------------------
 
